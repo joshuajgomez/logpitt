@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
-import java.util.*
 import kotlin.concurrent.fixedRateTimer
 
 
@@ -47,7 +46,7 @@ fun logContainer(logList: List<String>, filter: String = "") {
 fun buttonBody(onLogReceived:(log: String)->Unit) {
     Button(onClick = {
         CoroutineScope(Dispatchers.Default).launch {
-            readLogs { onLogReceived(it) }
+            readLogsFake { onLogReceived(it) }
         }
     }) {
         Text("Start")
@@ -60,7 +59,7 @@ fun readLogs(onLogReceived:(log: String)->Unit){
         val bufferedReader = BufferedReader(
             InputStreamReader(process.inputStream)
         )
-        var line: String? = ""
+        var line: String?
         while (bufferedReader.readLine().also { line = it } != null) {
             if (!line.isNullOrBlank()) onLogReceived(line!!)
         }
