@@ -1,3 +1,4 @@
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,7 +14,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 import kotlin.concurrent.fixedRateTimer
 
-
+@Preview
 @Composable
 fun deskbody() {
     Column {
