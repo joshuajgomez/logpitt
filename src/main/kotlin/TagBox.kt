@@ -1,3 +1,4 @@
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import util.getDummyTags
 
 @Composable
 fun TagBox(tagList: List<String>, onRemoveClick: (text: String) -> Unit) {
@@ -27,7 +29,7 @@ fun TagBox(tagList: List<String>, onRemoveClick: (text: String) -> Unit) {
 }
 
 @Composable
-fun TagItem(text: String, onRemoveClick: () -> Unit) {
+fun TagItem(text: String = "", onRemoveClick: () -> Unit = {}) {
     Row(
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         modifier = Modifier
@@ -49,4 +51,10 @@ fun TagItem(text: String, onRemoveClick: () -> Unit) {
                 .clickable { onRemoveClick() }
         )
     }
+}
+
+@Preview
+@Composable
+fun PreviewTagBox() {
+    TagBox(getDummyTags) {}
 }
