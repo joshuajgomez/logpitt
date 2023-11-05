@@ -53,24 +53,3 @@ fun buttonBody(onLogReceived:(log: String)->Unit) {
         Text("Start")
     }
 }
-
-fun readLogs(onLogReceived:(log: String)->Unit){
-    try {
-        val process = Runtime.getRuntime().exec("adb logcat")
-        val bufferedReader = BufferedReader(
-            InputStreamReader(process.inputStream)
-        )
-        var line: String?
-        while (bufferedReader.readLine().also { line = it } != null) {
-            if (!line.isNullOrBlank()) onLogReceived(line!!)
-        }
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-}
-
-fun readLogsFake(onLogReceived:(log: String)->Unit){
-    fixedRateTimer(period = 1500, action = {
-        onLogReceived("Heyy")
-    })
-}

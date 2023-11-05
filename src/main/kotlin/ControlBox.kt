@@ -14,7 +14,7 @@ import theme.Gray60
 
 @Preview
 @Composable
-fun ControlBox() {
+fun ControlBox(onStartClick: () -> Unit) {
     val tags = remember { mutableStateListOf<String>() }
     Row(
         modifier = Modifier
@@ -23,6 +23,9 @@ fun ControlBox() {
             .background(color = Gray60)
             .padding(all = 10.dp)
     ) {
+        Button(onClick = { onStartClick() }) {
+            Text(text = "Start")
+        }
         KeyInput { tags.add(it) }
         Spacer(modifier = Modifier.width(10.dp))
         Divider(
