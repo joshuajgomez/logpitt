@@ -25,14 +25,15 @@ fun readLogs(onLogAdded: (log: LogData) -> Unit) {
 
 fun readLogsFake(onLogAdded: (log: LogData) -> Unit) {
     fixedRateTimer(period = 500, action = {
-        onLogAdded(buildLogData(dummyLogList.random()))
+        val log = dummyLogList.random().log
+        onLogAdded(buildLogData(log))
     })
 }
 
 object LogReader {
     @JvmStatic
     fun main(args: Array<String>) {
-        dummyLogList.forEach { s -> buildLogData(s) }
+        dummyLogList.forEach { s -> buildLogData(s.log) }
     }
 
 }
