@@ -6,7 +6,7 @@ import androidx.compose.ui.window.application
 
 @Composable
 @Preview
-fun App() {
+fun app() {
     MaterialTheme {
         homeScreen()
     }
@@ -14,6 +14,6 @@ fun App() {
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication) {
-        App()
+        app()
     }
 }

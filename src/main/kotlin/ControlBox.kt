@@ -14,19 +14,19 @@ import theme.Gray60
 
 @Preview
 @Composable
-fun ControlBox(onStartClick: () -> Unit) {
+fun controlBox(onStartClick: () -> Unit) {
     val tags = remember { mutableStateListOf<String>() }
     Row(
         modifier = Modifier
             .height(100.dp)
             .fillMaxWidth()
             .background(color = Gray60)
-            .padding(all = 10.dp)
+            .padding(all = 10.dp),
     ) {
         Button(onClick = { onStartClick() }) {
             Text(text = "Start")
         }
-        KeyInput { tags.add(it) }
+        keyInput { tags.add(it) }
         Spacer(modifier = Modifier.width(10.dp))
         Divider(
             thickness = 1.dp, color = Color.Gray,
@@ -38,7 +38,7 @@ fun ControlBox(onStartClick: () -> Unit) {
 }
 
 @Composable
-fun KeyInput(onAddClick: (tag: String) -> Unit) {
+fun keyInput(onAddClick: (tag: String) -> Unit) {
     Column {
         Text(text = "Add text to filter", color = Color.LightGray, fontSize = 13.sp)
         Spacer(modifier = Modifier.height(10.dp))

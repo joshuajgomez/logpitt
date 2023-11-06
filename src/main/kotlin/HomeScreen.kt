@@ -28,9 +28,9 @@ fun homeScreen() {
             .background(color = Gray60)
     ) {
         val logList = remember { mutableStateListOf<LogData>() }
-        ControlBox(onStartClick = {
+        controlBox(onStartClick = {
             CoroutineScope(Dispatchers.Default).launch {
-                readLogs { logList.add(it) }
+                readLogsFake { logList.add(it) }
             }
         })
         logBox(logList)
@@ -42,7 +42,7 @@ fun logBox(logList: List<LogData>) {
     val lazyColumnListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     Surface(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(state = lazyColumnListState) {
+        LazyColumn(state = lazyColumnListState, userScrollEnabled = true) {
             coroutineScope.launch {
                 if (logList.isNotEmpty()) {
                     lazyColumnListState.scrollToItem(logList.lastIndex)

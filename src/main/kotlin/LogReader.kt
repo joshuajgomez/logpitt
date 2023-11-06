@@ -24,7 +24,7 @@ fun readLogs(onLogAdded: (log: LogData) -> Unit) {
 }
 
 fun readLogsFake(onLogAdded: (log: LogData) -> Unit) {
-    fixedRateTimer(period = 1000, action = {
+    fixedRateTimer(period = 500, action = {
         onLogAdded(buildLogData(dummyLogList.random()))
     })
 }
