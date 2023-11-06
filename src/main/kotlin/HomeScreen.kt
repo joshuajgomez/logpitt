@@ -8,15 +8,20 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import data.LogData
+import data.Priority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import theme.Blue10
 import theme.Gray60
+import theme.Green10
+import theme.Red10
 
 @Preview
 @Composable
-fun HomeScreen() {
+fun homeScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -28,39 +33,40 @@ fun HomeScreen() {
                 readLogs { logList.add(it) }
             }
         })
-        LogBox(logList)
+        logBox(logList)
     }
-}
-
-fun startReadingLogs() {
-    CoroutineScope(Dispatchers.Default).launch {
-        readLogs { onLogReceived(it) }
-    }
-}
-
-fun onLogReceived(it: LogData) {
-    TODO("Not yet implemented")
 }
 
 @Composable
-fun LogBox(logList: List<LogData>) {
+fun logBox(logList: List<LogData>) {
     val lazyColumnListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     Surface(modifier = Modifier.fillMaxSize()) {
-        LazyColumn {
+        LazyColumn(state = lazyColumnListState) {
             coroutineScope.launch {
                 if (logList.isNotEmpty()) {
                     lazyColumnListState.scrollToItem(logList.lastIndex)
                 }
             }
             items(items = logList) {
-                LogItem(it)
+                logItem(it)
             }
         }
     }
 }
 
 @Composable
-fun LogItem(text: LogData) {
-    Text(text = text.toString())
+fun logItem(logData: LogData) {
+    Text(
+        text = logData.log,
+        color = getColor(logData.priority)
+    )
+}
+
+fun getColor(priority: Int) = when (priority) {
+    Priority.ERROR -> Red10
+    Priority.WARN -> Red10
+    Priority.INFO -> Green10
+    Priority.DEBUG -> Blue10
+    else -> Color.Black
 }

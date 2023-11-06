@@ -23,25 +23,39 @@ fun readLogs(onLogAdded: (log: LogData) -> Unit) {
     }
 }
 
-fun readLogsFake(onLogReceived: (log: String) -> Unit) {
-    fixedRateTimer(period = 1500, action = {
-        onLogReceived("Heyy")
+fun readLogsFake(onLogAdded: (log: LogData) -> Unit) {
+    fixedRateTimer(period = 1000, action = {
+        onLogAdded(buildLogData(dummyLogList.random()))
     })
 }
 
 object LogReader {
     @JvmStatic
     fun main(args: Array<String>) {
-        dummyLogList.forEach { s -> println(buildLogData(s)) }
+        dummyLogList.forEach { s -> buildLogData(s) }
     }
 
 }
 
-fun getPriority(tag: String): Int {
-    return if (tag == "V") Priority.VERBOSE else -1
+fun getPriority(priority: String) = when(priority){
+    "E" -> Priority.ERROR
+    "W" -> Priority.WARN
+    "I" -> Priority.INFO
+    "A" -> Priority.ASSERT
+    "D" -> Priority.DEBUG
+    "V" -> Priority.VERBOSE
+    else -> Priority.DEBUG
 }
 
+const val BEGIN_LOG_PREFIX = "---------"
+
 fun buildLogData(textLog: String): LogData {
+    if (textLog.startsWith(BEGIN_LOG_PREFIX)) {
+        return LogData(
+            priority = Priority.SYSTEM,
+            log = textLog
+        )
+    }
     var logData = LogData()
     val splitList = textLog.trim().split(" ").filter { s -> s.isNotEmpty() }
     try {
@@ -51,15 +65,24 @@ fun buildLogData(textLog: String): LogData {
         val priority = getPriority(splitList[4])
         var tag = splitList[5].trim()
         if (tag.last() == ':') {
-            tag = tag.substring(0, tag.length - 2)
+            tag = if(tag.length == 1) "" else tag.substring(0, tag.length - 2)
         }
         val lengthSoFar = "$dateTime$pid$tid$priority$tag     ".length
         val colonIndex = textLog.indexOf(":", lengthSoFar)
         val message = textLog.substring(colonIndex + 1).trim()
-        logData = LogData(tid = tid, pid = pid, dateTime = dateTime, tag = tag, priority = priority, message = message)
+        logData = LogData(
+            tid = tid,
+            pid = pid,
+            dateTime = dateTime,
+            tag = tag,
+            priority = priority,
+            message = message,
+            log = textLog
+        )
     } catch (e: Exception) {
-        println("Error parsing: $textLog")
-        println(e.localizedMessage)
+        println("Error parsing #${e.stackTrace.first().lineNumber}: $textLog")
+        println(splitList)
+        e.printStackTrace()
     }
     return logData
 }
