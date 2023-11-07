@@ -17,22 +17,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import data.FilterData
+import util.getSampleFilters
 import util.getSampleTags
 
 @Composable
-fun tagBox(tagList: List<String>, onRemoveClick: (text: String) -> Unit) {
+fun filterBox(filterList: List<FilterData>, onRemoveClick: (filter: FilterData) -> Unit) {
     LazyHorizontalGrid(
         rows = GridCells.Adaptive(20.dp),
         modifier = Modifier.padding(start = 10.dp)
     ) {
-        items(items = tagList) {
-            TagItem(it) { onRemoveClick(it) }
+        items(items = filterList) {
+            filterItem(it) { onRemoveClick(it) }
         }
     }
 }
 
 @Composable
-fun TagItem(text: String = "", onRemoveClick: () -> Unit = {}) {
+fun filterItem(filter: FilterData = getSampleFilters.random(), onRemoveClick: () -> Unit = {}) {
     Row(
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
         modifier = Modifier
@@ -44,7 +46,7 @@ fun TagItem(text: String = "", onRemoveClick: () -> Unit = {}) {
             .height(25.dp)
             .padding(start = 5.dp, end = 5.dp)
     ) {
-        Text(text = text, fontSize = 15.sp)
+        Text(text = filter.text, fontSize = 15.sp)
         Spacer(modifier = Modifier.width(5.dp))
         Icon(
             imageVector = Icons.Default.Close,
@@ -59,5 +61,5 @@ fun TagItem(text: String = "", onRemoveClick: () -> Unit = {}) {
 @Preview
 @Composable
 fun PreviewTagBox() {
-    tagBox(getSampleTags) {}
+    filterBox(getSampleFilters) {}
 }

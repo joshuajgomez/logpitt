@@ -15,17 +15,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import data.FilterData
 import theme.*
+import util.getSampleFilters
 
 @Preview
 @Composable
 fun previewControlBox() {
-    controlBox({}, {})
+    controlBox(filterList = getSampleFilters, {}, {}, {}, {})
 }
 
 @Composable
-fun controlBox(onStartClick: (isStart: Boolean) -> Unit, onRefreshClick: () -> Unit) {
-    val tags = remember { mutableStateListOf<String>() }
+fun controlBox(
+    filterList: List<FilterData>,
+    onStartClick: (isStart: Boolean) -> Unit,
+    onRefreshClick: () -> Unit,
+    onFilterAdded: (text: String) -> Unit,
+    onFilterRemoved: (filter: FilterData) -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -42,14 +49,14 @@ fun controlBox(onStartClick: (isStart: Boolean) -> Unit, onRefreshClick: () -> U
             modifier = Modifier.width(1.dp).fillMaxHeight()
         )
 
-        keyInput { tags.add(it) }
+        keyInput { onFilterAdded(it) }
 
         Divider(
             thickness = 1.dp, color = Color.Gray,
             modifier = Modifier.width(1.dp).fillMaxHeight()
         )
 
-        tagBox(tags) { tags.remove(it) }
+        filterBox(filterList) { onFilterRemoved(it) }
     }
 }
 

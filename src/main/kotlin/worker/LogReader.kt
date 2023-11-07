@@ -1,7 +1,6 @@
 package worker
 
 import data.LogData
-import data.Priority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,13 +60,13 @@ class LogReader {
     }
 
     private fun getPriority(priority: String) = when (priority) {
-        "E" -> Priority.ERROR
-        "W" -> Priority.WARN
-        "I" -> Priority.INFO
-        "A" -> Priority.ASSERT
-        "D" -> Priority.DEBUG
-        "V" -> Priority.VERBOSE
-        else -> Priority.DEBUG
+        "E" -> LogData.Priority.ERROR
+        "W" -> LogData.Priority.WARN
+        "I" -> LogData.Priority.INFO
+        "A" -> LogData.Priority.ASSERT
+        "D" -> LogData.Priority.DEBUG
+        "V" -> LogData.Priority.VERBOSE
+        else -> LogData.Priority.DEBUG
     }
 
     private val BEGIN_LOG_PREFIX = "---------"
@@ -75,7 +74,7 @@ class LogReader {
     private fun buildLogData(textLog: String): LogData {
         if (textLog.startsWith(BEGIN_LOG_PREFIX)) {
             return LogData(
-                priority = Priority.SYSTEM,
+                priority = LogData.Priority.SYSTEM,
                 log = textLog
             )
         }

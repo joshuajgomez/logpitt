@@ -15,24 +15,28 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import data.FilterData
 import data.LogData
-import data.Priority
 import kotlinx.coroutines.launch
 import theme.*
+import util.getSampleFilters
 import util.getSampleLogList
+import java.util.function.Predicate
 
 @Preview
 @Composable
 fun previewLogBox() {
-    logBox(getSampleLogList)
+    logBox(getSampleLogList, getSampleFilters)
 }
 
 @Composable
-fun logBox(logList: List<LogData>) {
+fun logBox(logList: List<LogData>, filterList: List<FilterData>) {
     val lazyColumnListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
+    val filteredList = filterLogs(logList, filterList)
     SelectionContainer {
         LazyColumn(
             state = lazyColumnListState,
@@ -42,15 +46,31 @@ fun logBox(logList: List<LogData>) {
                 .background(color = Gray70, shape = RoundedCornerShape(5.dp))
         ) {
             coroutineScope.launch {
-                if (logList.isNotEmpty()) {
+                if (filteredList.isNotEmpty()) {
                     lazyColumnListState.scrollToItem(logList.lastIndex)
                 }
             }
-            items(items = logList) {
+            items(items = filteredList) {
                 logItem(it)
             }
         }
     }
+}
+
+fun filterLogs(logList: List<LogData>, filterList: List<FilterData>): List<LogData> {
+    if (filterList.isEmpty()) {
+        return logList
+    }
+    val filteredList: ArrayList<LogData> = ArrayList()
+    for (logData in logList) {
+        for (filterData in filterList) {
+            if (logData.log.toLowerCase().contains(filterData.text.toLowerCase())) {
+                filteredList.add(logData)
+                break
+            }
+        }
+    }
+    return filteredList
 }
 
 @Composable
@@ -66,9 +86,9 @@ fun logItem(logData: LogData) {
 }
 
 fun getColor(priority: Int) = when (priority) {
-    Priority.ERROR -> Red10
-    Priority.WARN -> Red10
-    Priority.INFO -> Green10
-    Priority.DEBUG -> Blue10
+    LogData.Priority.ERROR -> Red10
+    LogData.Priority.WARN -> Red10
+    LogData.Priority.INFO -> Green10
+    LogData.Priority.DEBUG -> Blue10
     else -> Color.LightGray
 }
