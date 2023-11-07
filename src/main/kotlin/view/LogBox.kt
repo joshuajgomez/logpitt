@@ -1,3 +1,5 @@
+package view
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -5,8 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,27 +20,34 @@ import androidx.compose.ui.unit.sp
 import data.LogData
 import data.Priority
 import kotlinx.coroutines.launch
-import theme.Blue10
-import theme.Gray60
-import theme.Green10
-import theme.Red10
-import util.dummyLogList
+import theme.*
+import util.getSampleLogList
+
+@Preview
+@Composable
+fun previewLogBox() {
+    logBox(getSampleLogList)
+}
 
 @Composable
 fun logBox(logList: List<LogData>) {
     val lazyColumnListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    Surface(modifier = Modifier.fillMaxSize().background(color = Gray60)) {
-        SelectionContainer {
-            LazyColumn(state = lazyColumnListState, modifier = Modifier.background(color = Gray60)) {
-                coroutineScope.launch {
-                    if (logList.isNotEmpty()) {
-                        lazyColumnListState.scrollToItem(logList.lastIndex)
-                    }
+    SelectionContainer {
+        LazyColumn(
+            state = lazyColumnListState,
+            modifier = Modifier
+                .padding(all = 3.dp)
+                .fillMaxSize()
+                .background(color = Gray70, shape = RoundedCornerShape(5.dp))
+        ) {
+            coroutineScope.launch {
+                if (logList.isNotEmpty()) {
+                    lazyColumnListState.scrollToItem(logList.lastIndex)
                 }
-                items(items = logList) {
-                    logItem(it)
-                }
+            }
+            items(items = logList) {
+                logItem(it)
             }
         }
     }
@@ -62,10 +71,4 @@ fun getColor(priority: Int) = when (priority) {
     Priority.INFO -> Green10
     Priority.DEBUG -> Blue10
     else -> Color.LightGray
-}
-
-@Preview
-@Composable
-fun previewLogBox() {
-    logBox(dummyLogList)
 }

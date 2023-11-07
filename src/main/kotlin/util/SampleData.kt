@@ -3,14 +3,14 @@ package util
 import data.LogData
 import data.Priority
 
-val getDummyTags: List<String> = listOf(
+val getSampleTags: List<String> = listOf(
     "AndroidRuntime",
     "VST_Alexa",
     "Logger",
     ".app #",
 )
 
-val dummyLogList = listOf(
+val getSampleLogList = listOf(
     LogData(priority = Priority.ERROR, log = "11-05 20:22:08.608  7152  7874 E MDD     : DownloadProgressMonitor: Can't find file group for uri: android://com.google.android.apps.messaging/files/datadownload/shared/public/datadownloadfile_1699195911784"),
     LogData(priority = Priority.WARN, log = "11-05 21:30:00.109   570  1081 W CpuPowerCalculator: UID 1027 CPU freq # mismatch: Power Profile # 2 actual # 8"),
     LogData(priority = Priority.DEBUG, log = "11-05 20:25:05.048  2691  2882 D EGL_emulation: app_time_stats: avg=496.43ms min=478.26ms max=512.82ms count=3"),

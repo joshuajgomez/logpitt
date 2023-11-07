@@ -1,3 +1,5 @@
+package view
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,12 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import util.getDummyTags
+import util.getSampleTags
 
 @Composable
-fun TagBox(tagList: List<String>, onRemoveClick: (text: String) -> Unit) {
+fun tagBox(tagList: List<String>, onRemoveClick: (text: String) -> Unit) {
     LazyHorizontalGrid(
         rows = GridCells.Adaptive(20.dp),
+        modifier = Modifier.padding(start = 10.dp)
     ) {
         items(items = tagList) {
             TagItem(it) { onRemoveClick(it) }
@@ -56,5 +59,5 @@ fun TagItem(text: String = "", onRemoveClick: () -> Unit = {}) {
 @Preview
 @Composable
 fun PreviewTagBox() {
-    TagBox(getDummyTags) {}
+    tagBox(getSampleTags) {}
 }
