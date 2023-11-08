@@ -42,10 +42,12 @@ fun homeScreen() {
             onRefreshClick = { logList.clear() },
             onFilterAdded = { filterList.add(FilterData(it)) },
             onFilterRemoved = { filterList.remove(it) },
-            onFileUploadClick = { browseFile {
-                logReader.readLogs(it)
-                logReader.setListener(onLogAdded = { logList.add(it) })
-            } },
+            onFileUploadClick = {
+                browseFile { it ->
+                    logReader.readLogs(it)
+                    logReader.setListener(onLogAdded = { logList.add(it) })
+                }
+            },
         )
 
         logBox(
@@ -62,6 +64,5 @@ fun browseFile(readFile: (filePath: String) -> Unit) {
     val fileDialog = FileDialog(ComposeWindow())
     fileDialog.isVisible = true
     val filePath = fileDialog.directory + fileDialog.file
-    println(filePath)
-    if (filePath.isNotEmpty()) readFile(filePath)
+    if (filePath.isNotEmpty() && filePath != "nullnull") readFile(filePath)
 }
