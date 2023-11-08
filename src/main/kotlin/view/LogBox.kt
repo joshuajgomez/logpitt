@@ -14,6 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
@@ -24,7 +28,6 @@ import kotlinx.coroutines.launch
 import theme.*
 import util.getSampleFilters
 import util.getSampleLogList
-import java.util.function.Predicate
 
 @Preview
 @Composable
@@ -36,7 +39,7 @@ fun previewLogBox() {
 fun logBox(logList: List<LogData>, filterList: List<FilterData>) {
     val lazyColumnListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
-    val filteredList = filterLogs(logList, filterList)
+//    val filteredList = filterLogs(logList, filterList)
     SelectionContainer {
         LazyColumn(
             state = lazyColumnListState,
@@ -46,11 +49,11 @@ fun logBox(logList: List<LogData>, filterList: List<FilterData>) {
                 .background(color = Gray70, shape = RoundedCornerShape(5.dp))
         ) {
             coroutineScope.launch {
-                if (filteredList.isNotEmpty()) {
+                if (logList.isNotEmpty()) {
                     lazyColumnListState.scrollToItem(logList.lastIndex)
                 }
             }
-            items(items = filteredList) {
+            items(items = logList) {
                 logItem(it)
             }
         }
@@ -78,16 +81,14 @@ fun logItem(logData: LogData) {
     Text(
         text = logData.log,
         color = getColor(logData.priority),
-        fontSize = 13.sp,
-        modifier = Modifier.padding(bottom = 5.dp),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        fontSize = 14.sp,
+        fontFamily = courierFont
     )
 }
 
 fun getColor(priority: Int) = when (priority) {
     LogData.Priority.ERROR -> Red10
-    LogData.Priority.WARN -> Red10
+    LogData.Priority.WARN -> Yellow10
     LogData.Priority.INFO -> Green10
     LogData.Priority.DEBUG -> Blue10
     else -> Color.LightGray
