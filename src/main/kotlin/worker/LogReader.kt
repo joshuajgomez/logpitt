@@ -5,20 +5,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import util.getSampleLogList
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
+import java.io.*
 import kotlin.concurrent.fixedRateTimer
 
 class LogReader {
 
     private var onLogAdded: (logData: LogData) -> Unit = {}
-
-    init {
-        CoroutineScope(Dispatchers.Default).launch {
-            readLogsFake()
-        }
-    }
 
     private object LogReader {
         @JvmStatic
@@ -35,21 +27,29 @@ class LogReader {
         this.onLogAdded = {}
     }
 
-    private fun readLogs() {
-        try {
-            val process = Runtime.getRuntime().exec("adb logcat")
-            val bufferedReader = BufferedReader(
-                InputStreamReader(process.inputStream)
-            )
-            var line: String?
-            while (bufferedReader.readLine().also { line = it } != null) {
-                if (!line.isNullOrBlank()) {
-                    onLogAdded(buildLogData(line!!))
-                }
+    fun readLogs(filePath: String = "") {
+        CoroutineScope(Dispatchers.Default).launch {
+            if (filePath.isEmpty()) {
+                readAdbLogs()
+            } else {
+                readLogsFromFile(filePath)
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
+    }
+
+    private fun readLogsFromFile(filePath: String) {
+        val inputStream: InputStream = File(filePath).inputStream()
+        readInputStream(inputStream)
+    }
+
+    private fun readAdbLogs() {
+        val process = Runtime.getRuntime().exec("adb logcat")
+        readInputStream(process.inputStream)
+    }
+
+
+    private fun readInputStream(inputStream: InputStream) {
+        inputStream.bufferedReader().forEachLine { if (it.isNotEmpty()) onLogAdded(buildLogData(it)) }
     }
 
     private fun readLogsFake() {

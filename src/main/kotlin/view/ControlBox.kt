@@ -22,7 +22,7 @@ import util.getSampleFilters
 @Preview
 @Composable
 fun previewControlBox() {
-    controlBox(filterList = getSampleFilters, {}, {}, {}, {})
+    controlBox(filterList = getSampleFilters, {}, {}, {}, {}, {})
 }
 
 @Composable
@@ -31,7 +31,8 @@ fun controlBox(
     onStartClick: (isStart: Boolean) -> Unit,
     onRefreshClick: () -> Unit,
     onFilterAdded: (text: String) -> Unit,
-    onFilterRemoved: (filter: FilterData) -> Unit
+    onFilterRemoved: (filter: FilterData) -> Unit,
+    onFileUploadClick: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -42,7 +43,7 @@ fun controlBox(
             .padding(all = 10.dp),
     ) {
 
-        ButtonBox(onStartClick, onRefreshClick)
+        ButtonBox(onStartClick, onRefreshClick, onFileUploadClick)
 
         Divider(
             thickness = 1.dp, color = Color.Gray,
@@ -61,7 +62,11 @@ fun controlBox(
 }
 
 @Composable
-fun ButtonBox(onStartClick: (isStart: Boolean) -> Unit, onRefreshClick: () -> Unit) {
+fun ButtonBox(
+    onStartClick: (isStart: Boolean) -> Unit,
+    onRefreshClick: () -> Unit,
+    onFileUploadClick: () -> Unit,
+) {
     val isRunning = remember { mutableStateOf(false) }
     Row {
         Icon(
@@ -91,6 +96,17 @@ fun ButtonBox(onStartClick: (isStart: Boolean) -> Unit, onRefreshClick: () -> Un
                 .background(shape = CircleShape, color = LightGray20)
                 .size(30.dp)
                 .clickable { onRefreshClick() }
+                .padding(all = 5.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Icon(
+            imageVector = Icons.Default.UploadFile,
+            contentDescription = "upload",
+            tint = Color.DarkGray,
+            modifier = Modifier
+                .background(shape = CircleShape, color = LightGray20)
+                .size(30.dp)
+                .clickable { onFileUploadClick() }
                 .padding(all = 5.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))
