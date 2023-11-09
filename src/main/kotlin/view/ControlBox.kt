@@ -22,17 +22,19 @@ import util.getSampleFilters
 @Preview
 @Composable
 fun previewControlBox() {
-    controlBox(filterList = getSampleFilters, {}, {}, {}, {}, {})
+    controlBox()
 }
 
 @Composable
 fun controlBox(
-    filterList: List<FilterData>,
-    onStartClick: (isStart: Boolean) -> Unit,
-    onRefreshClick: () -> Unit,
-    onFilterAdded: (text: String) -> Unit,
-    onFilterRemoved: (filter: FilterData) -> Unit,
-    onFileUploadClick: () -> Unit,
+    isPaused: Boolean = false,
+    filterList: List<FilterData> = listOf(),
+    onStartClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
+    onFilterAdded: (text: String) -> Unit = {},
+    onFilterRemoved: (filter: FilterData) -> Unit = {},
+    onFileUploadClick: () -> Unit = {},
+    onGoDownClick: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -43,7 +45,7 @@ fun controlBox(
             .padding(all = 10.dp),
     ) {
 
-        ButtonBox(onStartClick, onRefreshClick, onFileUploadClick)
+        ButtonBox(isPaused, onStartClick, onRefreshClick, onFileUploadClick)
 
         Divider(
             thickness = 1.dp, color = Color.Gray,
@@ -58,33 +60,36 @@ fun controlBox(
         )
 
         filterBox(filterList) { onFilterRemoved(it) }
+
+        Icon(
+            imageVector = Icons.Default.ArrowDownward,
+            contentDescription = "Jump to now",
+            tint = Color.DarkGray,
+            modifier = Modifier
+                .background(shape = CircleShape, color = LightGray20)
+                .size(30.dp)
+                .clickable { onGoDownClick() }
+                .padding(all = 5.dp)
+        )
     }
 }
 
 @Composable
 fun ButtonBox(
-    onStartClick: (isStart: Boolean) -> Unit,
+    isPaused: Boolean,
+    onStartClick: () -> Unit,
     onRefreshClick: () -> Unit,
     onFileUploadClick: () -> Unit,
 ) {
-    val isRunning = remember { mutableStateOf(false) }
     Row {
         Icon(
-            imageVector = if (isRunning.value) Icons.Default.Pause else Icons.Default.PlayArrow,
+            imageVector = if (isPaused) Icons.Default.PlayArrow else Icons.Default.Pause,
             contentDescription = "start",
             tint = Color.DarkGray,
             modifier = Modifier
                 .background(shape = CircleShape, color = LightGray20)
                 .size(30.dp)
-                .clickable {
-                    if (isRunning.value) {
-                        onStartClick(false)
-                        isRunning.value = false
-                    } else {
-                        onStartClick(true)
-                        isRunning.value = true
-                    }
-                }
+                .clickable { onStartClick() }
                 .padding(all = 5.dp)
         )
         Spacer(modifier = Modifier.width(10.dp))

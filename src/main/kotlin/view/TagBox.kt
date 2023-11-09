@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import data.FilterData
 import util.getSampleFilters
-import util.getSampleTags
 
 @Composable
 fun filterBox(filterList: List<FilterData>, onRemoveClick: (filter: FilterData) -> Unit) {
     LazyHorizontalGrid(
         rows = GridCells.Adaptive(20.dp),
-        modifier = Modifier.padding(start = 10.dp)
+        modifier = Modifier
+            .padding(start = 10.dp)
     ) {
         items(items = filterList) {
             filterItem(it) { onRemoveClick(it) }

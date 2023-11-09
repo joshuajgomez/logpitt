@@ -4,30 +4,35 @@ import data.LogData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import util.Logger
 import util.getSampleLogList
 import java.io.*
 import kotlin.concurrent.fixedRateTimer
 
 class LogReader {
 
-    private var onLogAdded: (logData: LogData) -> Unit = {}
+    private var mOnLogAdded: (logData: LogData) -> Unit = {}
+
+    private var mInputStream: InputStream? = null
+
+    private var mProcess: Process? = null
 
     private object LogReader {
         @JvmStatic
         fun main(args: Array<String>) {
+            Logger.entry()
             getSampleLogList.forEach { s -> LogReader().buildLogData(s.log) }
         }
     }
 
-    fun setListener(onLogAdded: (logData: LogData) -> Unit) {
-        this.onLogAdded = onLogAdded
-    }
-
     fun removeListener() {
-        this.onLogAdded = {}
+        Logger.entry()
+        this.mOnLogAdded = {}
     }
 
-    fun readLogs(filePath: String = "") {
+    fun readLogs(filePath: String = "", onLogAdded: (logData: LogData) -> Unit) {
+        Logger.entry()
+        mOnLogAdded = onLogAdded
         CoroutineScope(Dispatchers.Default).launch {
             if (filePath.isEmpty()) {
                 readAdbLogs()
@@ -38,24 +43,31 @@ class LogReader {
     }
 
     private fun readLogsFromFile(filePath: String) {
-        val inputStream: InputStream = File(filePath).inputStream()
-        readInputStream(inputStream)
+        Logger.entry()
+        val inputStream = File(filePath).inputStream()
+        inputStream.bufferedReader()
+            .forEachLine {
+                if (it.isNotEmpty())
+                    mOnLogAdded(buildLogData(it))
+                Logger.info(it)
+            }
     }
 
     private fun readAdbLogs() {
+        Logger.entry()
         val process = Runtime.getRuntime().exec("adb logcat")
-        readInputStream(process.inputStream)
-    }
-
-
-    private fun readInputStream(inputStream: InputStream) {
-        inputStream.bufferedReader().forEachLine { if (it.isNotEmpty()) onLogAdded(buildLogData(it)) }
+        val inputStream = process.inputStream
+        inputStream.bufferedReader().forEachLine {
+            if (it.isNotEmpty())
+                mOnLogAdded(buildLogData(it))
+        }
     }
 
     private fun readLogsFake() {
+        Logger.entry()
         fixedRateTimer(period = 500, action = {
             val log = getSampleLogList.random().log
-            onLogAdded(buildLogData(log))
+            mOnLogAdded(buildLogData(log))
         })
     }
 
@@ -105,6 +117,7 @@ class LogReader {
             println("Error parsing #${e.stackTrace.first().lineNumber}: $textLog")
             println(splitList)
             e.printStackTrace()
+            Logger.error("Error parsing: " + e.message + " " + textLog)
         }
         return logData
     }
