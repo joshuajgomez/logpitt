@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,14 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import data.FilterData
 import theme.*
-import util.getSampleFilters
 
 @Preview
 @Composable
 fun previewControlBox() {
-    controlBox()
+    ButtonBox()
 }
 
 @Composable
@@ -76,10 +77,10 @@ fun controlBox(
 
 @Composable
 fun ButtonBox(
-    isPaused: Boolean,
-    onStartClick: () -> Unit,
-    onRefreshClick: () -> Unit,
-    onFileUploadClick: () -> Unit,
+    isPaused: Boolean = false,
+    onStartClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
+    onFileUploadClick: () -> Unit = {},
 ) {
     Row {
         Icon(
@@ -119,20 +120,12 @@ fun ButtonBox(
 }
 
 @Composable
-fun keyInput(onAddClick: (tag: String) -> Unit) {
+fun keyInput(onAddClick: (tag: String) -> Unit = {}) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Spacer(modifier = Modifier.width(10.dp))
         var text by remember { mutableStateOf("") }
-        BasicTextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier
-                .background(
-                    MaterialTheme.colors.surface,
-                    MaterialTheme.shapes.small,
-                )
-                .height(30.dp).width(200.dp),
-        )
+
+        FilterTextField(text, onValueChange = { text = it })
 
         Spacer(modifier = Modifier.width(10.dp))
 
@@ -149,4 +142,47 @@ fun keyInput(onAddClick: (tag: String) -> Unit) {
         }
         Spacer(modifier = Modifier.width(10.dp))
     }
+}
+
+@Composable
+fun FilterTextField(text: String, onValueChange: (text: String) -> Unit) {
+    BasicTextField(
+        value = text,
+        onValueChange = { onValueChange(it) },
+        modifier = Modifier
+            .background(
+                color = LightGray20,
+                shape = RoundedCornerShape(5.dp),
+            )
+            .wrapContentHeight()
+            .width(200.dp)
+            .padding(all = 5.dp),
+        decorationBox = { innerTextField ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                filterIcon()
+                Box(Modifier.weight(1f).padding(start = 5.dp)) {
+                    if (text.isEmpty()) Text(
+                        "Add text to filter",
+                        style = LocalTextStyle.current.copy(
+                            color = LightGray10,
+                            fontSize = 15.sp
+                        )
+                    )
+                    innerTextField()
+                }
+            }
+        }
+
+    )
+}
+
+@Composable
+fun filterIcon() {
+    Icon(
+        imageVector = Icons.Default.FilterList,
+        contentDescription = "filter",
+        modifier = Modifier.size(20.dp)
+    )
 }
