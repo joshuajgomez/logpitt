@@ -55,7 +55,8 @@ fun homeScreen() {
             },
             onGoDownClick = {
                 coroutineScope.launch {
-                    lazyColumnListState.scrollToItem(logList.lastIndex)
+                    if (logList.isNotEmpty())
+                        lazyColumnListState.scrollToItem(logList.lastIndex)
                 }
             }
         )
